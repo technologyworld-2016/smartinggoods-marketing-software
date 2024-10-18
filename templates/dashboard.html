@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - SaaS Business{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Welcome, {{ current_user.username }}!</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Subscription Status</h5>
+                    <p class="card-text">
+                        {% if current_user.subscription_tier == 'free' %}
+                            You are currently on the Free plan.
+                        {% else %}
+                            You are subscribed to the {{ current_user.subscription_tier.capitalize() }} plan.
+                        {% endif %}
+                    </p>
+                    <a href="{{ url_for('pricing') }}" class="btn btn-primary">Upgrade Plan</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Activity</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Activity 1</li>
+                        <li class="list-group-item">Activity 2</li>
+                        <li class="list-group-item">Activity 3</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

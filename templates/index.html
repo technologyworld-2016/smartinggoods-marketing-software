@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to SaaS Business{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 mb-4">Welcome to SaaS Business</h1>
+            <p class="lead mb-5">Empower your business with our cutting-edge SaaS solution.</p>
+            <a href="{{ url_for('pricing') }}" class="btn btn-primary btn-lg">View Pricing</a>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <h3>Feature 1</h3>
+            <p>Description of feature 1 and its benefits.</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Feature 2</h3>
+            <p>Description of feature 2 and its benefits.</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Feature 3</h3>
+            <p>Description of feature 3 and its benefits.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
