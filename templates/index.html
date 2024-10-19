@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Welcome to Smarting Goods Marketing Software{% endblock %}
+{% block title %}Welcome to Smarting Goods - Empower Your Marketing{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-0">
@@ -11,7 +11,10 @@
                 <div class="col-lg-6">
                     <h1 class="display-4 fw-bold mb-4">Transform Your Marketing with Smarting Goods</h1>
                     <p class="lead mb-4">Unlock powerful insights, streamline your workflow, and scale your marketing efforts with our cutting-edge platform.</p>
-                    <a href="{{ url_for('pricing') }}" class="btn btn-light btn-lg">Start Your Journey</a>
+                    <div class="d-flex gap-3">
+                        <a href="{{ url_for('register') }}" class="btn btn-light btn-lg">Start Free Trial</a>
+                        <a href="#features" class="btn btn-outline-light btn-lg">Learn More</a>
+                    </div>
                 </div>
                 <div class="col-lg-6 d-none d-lg-block">
                     <img src="{{ url_for('static', filename='images/hero-image.svg') }}" alt="Smarting Goods Marketing Software" class="img-fluid hero-image">
@@ -21,7 +24,7 @@
     </section>
 
     <!-- Features Section -->
-    <section class="py-5">
+    <section id="features" class="py-5">
         <div class="container">
             <h2 class="text-center mb-5">Powerful Features to Boost Your Marketing</h2>
             <div class="row g-4">
@@ -56,8 +59,44 @@
         </div>
     </section>
 
-    <!-- Testimonials Section -->
+    <!-- How It Works Section -->
     <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">How Smarting Goods Works</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <h3 class="m-0">1</h3>
+                        </div>
+                        <h4>Connect Your Data</h4>
+                        <p>Easily integrate your marketing data from various sources.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <h3 class="m-0">2</h3>
+                        </div>
+                        <h4>Analyze & Optimize</h4>
+                        <p>Leverage our AI-powered insights to optimize your campaigns.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <h3 class="m-0">3</h3>
+                        </div>
+                        <h4>Scale Your Success</h4>
+                        <p>Watch your marketing efforts grow and succeed like never before.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-5">
         <div class="container">
             <h2 class="text-center mb-5">What Our Customers Say</h2>
             <div class="row">
@@ -65,7 +104,13 @@
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body">
                             <p class="card-text">"Smarting Goods has revolutionized our marketing processes. The insights we've gained are invaluable!"</p>
-                            <footer class="blockquote-footer mt-3">John Doe, <cite title="Source Title">CEO of TechCorp</cite></footer>
+                            <div class="d-flex align-items-center mt-3">
+                                <img src="https://via.placeholder.com/50" alt="John Doe" class="rounded-circle me-3">
+                                <div>
+                                    <h5 class="mb-0">John Doe</h5>
+                                    <small class="text-muted">CEO of TechCorp</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -73,7 +118,13 @@
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body">
                             <p class="card-text">"The analytics features have transformed how we approach our campaigns. Truly a game-changer!"</p>
-                            <footer class="blockquote-footer mt-3">Jane Smith, <cite title="Source Title">CMO of DataDrive</cite></footer>
+                            <div class="d-flex align-items-center mt-3">
+                                <img src="https://via.placeholder.com/50" alt="Jane Smith" class="rounded-circle me-3">
+                                <div>
+                                    <h5 class="mb-0">Jane Smith</h5>
+                                    <small class="text-muted">CMO of DataDrive</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -81,7 +132,13 @@
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body">
                             <p class="card-text">"Exceptional support and constant improvements. Smarting Goods is an indispensable part of our toolkit."</p>
-                            <footer class="blockquote-footer mt-3">Mike Johnson, <cite title="Source Title">Founder of StartupX</cite></footer>
+                            <div class="d-flex align-items-center mt-3">
+                                <img src="https://via.placeholder.com/50" alt="Mike Johnson" class="rounded-circle me-3">
+                                <div>
+                                    <h5 class="mb-0">Mike Johnson</h5>
+                                    <small class="text-muted">Founder of StartupX</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

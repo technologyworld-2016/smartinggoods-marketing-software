@@ -20,7 +20,7 @@
                         <li>Email support</li>
                         <li>Help center access</li>
                     </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-outline-primary" onclick="startSignup('free')">Start Free Trial</button>
+                    <button type="button" class="w-100 btn btn-lg btn-outline-primary subscribe-btn" data-price-id="price_free">Start Free Trial</button>
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
                         <li>Priority email support</li>
                         <li>Help center access</li>
                     </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-primary" onclick="startSignup('basic')">Get started</button>
+                    <button type="button" class="w-100 btn btn-lg btn-primary subscribe-btn" data-price-id="price_basic">Get started</button>
                 </div>
             </div>
         </div>
@@ -54,66 +54,7 @@
                         <li>Phone and email support</li>
                         <li>Help center access</li>
                     </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-primary" onclick="startSignup('premium')">Get started</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div id="signup-wizard" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Sign Up</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="progress mb-4">
-                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Step 1 of 3</div>
-                    </div>
-                    <form id="signup-form">
-                        <div class="step" id="step1">
-                            <h4>Step 1: Account Information</h4>
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                        </div>
-                        <div class="step" id="step2" style="display: none;">
-                            <h4>Step 2: Subscription Details</h4>
-                            <div class="mb-3">
-                                <label for="plan" class="form-label">Selected Plan</label>
-                                <input type="text" class="form-control" id="plan" name="plan" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="billing-cycle" class="form-label">Billing Cycle</label>
-                                <select class="form-select" id="billing-cycle" name="billing-cycle">
-                                    <option value="monthly">Monthly</option>
-                                    <option value="annual">Annual (Save 10%)</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="step" id="step3" style="display: none;">
-                            <h4>Step 3: Payment Information</h4>
-                            <div id="card-element" class="mb-3">
-                                <!-- Stripe Elements will be inserted here -->
-                            </div>
-                            <div id="card-errors" role="alert"></div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="next-step">Next</button>
-                    <button type="button" class="btn btn-success" id="submit-signup" style="display: none;">Complete Sign Up</button>
+                    <button type="button" class="w-100 btn btn-lg btn-primary subscribe-btn" data-price-id="price_premium">Get started</button>
                 </div>
             </div>
         </div>
@@ -124,78 +65,43 @@
 {% block extra_js %}
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-    let currentStep = 1;
-    const totalSteps = 3;
+    // Initialize Stripe
     const stripe = Stripe('{{ stripe_public_key }}');
-    const elements = stripe.elements();
-    const cardElement = elements.create('card');
 
-    function startSignup(plan) {
-        document.getElementById('plan').value = plan;
-        $('#signup-wizard').modal('show');
-        updateProgress();
-    }
-
-    function updateProgress() {
-        const progressBar = document.querySelector('.progress-bar');
-        const progress = (currentStep / totalSteps) * 100;
-        progressBar.style.width = `${progress}%`;
-        progressBar.setAttribute('aria-valuenow', progress);
-        progressBar.textContent = `Step ${currentStep} of ${totalSteps}`;
-    }
-
-    document.getElementById('next-step').addEventListener('click', () => {
-        if (currentStep < totalSteps) {
-            document.getElementById(`step${currentStep}`).style.display = 'none';
-            currentStep++;
-            document.getElementById(`step${currentStep}`).style.display = 'block';
-            updateProgress();
-
-            if (currentStep === totalSteps) {
-                document.getElementById('next-step').style.display = 'none';
-                document.getElementById('submit-signup').style.display = 'inline-block';
-                cardElement.mount('#card-element');
-            }
-        }
+    // Handle subscription button clicks
+    document.addEventListener('DOMContentLoaded', function() {
+        const subscribeButtons = document.querySelectorAll('.subscribe-btn');
+        subscribeButtons.forEach(button => {
+            button.addEventListener('click', handleSubscription);
+        });
     });
 
-    document.getElementById('submit-signup').addEventListener('click', async (event) => {
-        event.preventDefault();
-        const form = document.getElementById('signup-form');
-        const formData = new FormData(form);
-
+    async function handleSubscription(event) {
+        const priceId = event.target.dataset.priceId;
+        
         try {
-            const response = await fetch('{{ url_for("register") }}', {
+            const response = await fetch('/create-checkout-session', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ priceId: priceId }),
             });
 
-            if (response.ok) {
-                const { client_secret } = await response.json();
-                const result = await stripe.confirmCardPayment(client_secret, {
-                    payment_method: {
-                        card: cardElement,
-                        billing_details: {
-                            name: formData.get('username'),
-                            email: formData.get('email')
-                        }
-                    }
-                });
+            const session = await response.json();
+            
+            const result = await stripe.redirectToCheckout({
+                sessionId: session.sessionId,
+            });
 
-                if (result.error) {
-                    console.error(result.error);
-                    // Display error to your customer
-                } else {
-                    window.location.href = '{{ url_for("dashboard") }}';
-                }
-            } else {
-                console.error('Registration failed');
-                // Display error to your customer
+            if (result.error) {
+                console.error(result.error.message);
+                alert('An error occurred. Please try again.');
             }
         } catch (error) {
             console.error('Error:', error);
-            // Display error to your customer
+            alert('An error occurred. Please try again.');
         }
-    });
+    }
 </script>
 {% endblock %}
