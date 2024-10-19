@@ -9,10 +9,38 @@ main {
     flex: 1;
 }
 
-.pricing-card {
-    transition: transform 0.3s;
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/static/images/hero-background.jpg');
+    background-size: cover;
+    background-position: center;
 }
 
-.pricing-card:hover {
+.card {
+    transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
     transform: translateY(-5px);
+}
+
+.testimonial-card {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.cta-section {
+    background: linear-gradient(45deg, var(--bs-primary), var(--bs-info));
+}
+
+/* Dark mode specific styles */
+[data-bs-theme=dark] .card {
+    background-color: var(--bs-dark);
+    border-color: var(--bs-gray-700);
+}
+
+[data-bs-theme=dark] .bg-light {
+    background-color: var(--bs-gray-800) !important;
+}
+
+[data-bs-theme=dark] .text-dark {
+    color: var(--bs-light) !important;
 }
