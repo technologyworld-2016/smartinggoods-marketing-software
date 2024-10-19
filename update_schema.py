@@ -25,6 +25,12 @@ def update_schema():
                 conn.commit()
             print("Added created_at column to User table.")
 
+        if 'is_admin' not in user_column_names:
+            with db.engine.connect() as conn:
+                conn.execute(text('ALTER TABLE "user" ADD COLUMN is_admin BOOLEAN DEFAULT FALSE'))
+                conn.commit()
+            print("Added is_admin column to User table.")
+
         # Check if the amount and created_at columns exist in the Subscription table
         subscription_columns = inspector.get_columns('subscription')
         subscription_column_names = [column['name'] for column in subscription_columns]

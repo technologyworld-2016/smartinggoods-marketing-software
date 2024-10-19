@@ -153,3 +153,63 @@ def handle_subscription_updated(subscription):
             db_subscription.status = subscription['status']
             db_subscription.current_period_end = subscription['current_period_end']
             db.session.commit()
+
+@app.route('/admin')
+@login_required
+def admin_dashboard():
+    if not current_user.is_admin:
+        flash('You do not have permission to access the admin dashboard.', 'danger')
+        return redirect(url_for('index'))
+    
+    users = User.query.all()
+    subscriptions = Subscription.query.all()
+    return render_template('admin_dashboard.html', users=users, subscriptions=subscriptions)
+
+@app.route('/admin/edit_user/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def edit_user(user_id):
+    if not current_user.is_admin:
+        flash('You do not have permission to edit users.', 'danger')
+        return redirect(url_for('index'))
+    
+    user = User.query.get_or_404(user_id)
+    if request.method == 'POST':
+        user.username = request.form['username']
+        user.email = request.form['email']
+        user.subscription_tier = request.form['subscription_tier']
+        user.is_admin = 'is_admin' in request.form
+        db.session.commit()
+        flash('User updated successfully.', 'success')
+        return redirect(url_for('admin_dashboard'))
+    
+    return render_template('edit_user.html', user=user)
+
+@app.route('/admin/delete_user/<int:user_id>', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    if not current_user.is_admin:
+        flash('You do not have permission to delete users.', 'danger')
+        return redirect(url_for('index'))
+    
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash('User deleted successfully.', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/manage_subscription/<int:subscription_id>', methods=['GET', 'POST'])
+@login_required
+def manage_subscription(subscription_id):
+    if not current_user.is_admin:
+        flash('You do not have permission to manage subscriptions.', 'danger')
+        return redirect(url_for('index'))
+    
+    subscription = Subscription.query.get_or_404(subscription_id)
+    if request.method == 'POST':
+        subscription.status = request.form['status']
+        subscription.current_period_end = datetime.strptime(request.form['current_period_end'], '%Y-%m-%d')
+        db.session.commit()
+        flash('Subscription updated successfully.', 'success')
+        return redirect(url_for('admin_dashboard'))
+    
+    return render_template('manage_subscription.html', subscription=subscription)

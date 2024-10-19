@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Edit User - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Edit User</h1>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="subscription_tier" class="form-label">Subscription Tier</label>
+            <select class="form-select" id="subscription_tier" name="subscription_tier">
+                <option value="free" {% if user.subscription_tier == 'free' %}selected{% endif %}>Free</option>
+                <option value="basic" {% if user.subscription_tier == 'basic' %}selected{% endif %}>Basic</option>
+                <option value="premium" {% if user.subscription_tier == 'premium' %}selected{% endif %}>Premium</option>
+            </select>
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin" {% if user.is_admin %}checked{% endif %}>
+            <label class="form-check-label" for="is_admin">Admin</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Update User</button>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
