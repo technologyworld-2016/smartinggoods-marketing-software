@@ -19,6 +19,10 @@ args = "Start Flask Server"
 task = "workflow.run"
 args = "Update Schema"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Check DB Settings"
+
 [[workflows.workflow]]
 name = "Start Flask Server"
 author = "agent"
@@ -41,6 +45,17 @@ agentRequireRestartOnSave = false
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python update_schema.py"
+
+[[workflows.workflow]]
+name = "Check DB Settings"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python check_db_settings.py"
 
 [deployment]
 run = ["sh", "-c", "python main.py"]
