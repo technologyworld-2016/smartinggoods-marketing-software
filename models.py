@@ -9,6 +9,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256), nullable=False)
     subscription_tier = db.Column(db.String(20), default='free')
     stripe_customer_id = db.Column(db.String(50), unique=True)
+    last_login = db.Column(db.DateTime, nullable=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
