@@ -24,7 +24,7 @@
                     {% if current_user.subscription_tier != 'free' %}
                         <p><strong>Next Billing Date:</strong> {{ current_user.subscription.current_period_end.strftime('%Y-%m-%d') }}</p>
                     {% endif %}
-                    <a href="{{ url_for('pricing') }}" class="btn btn-primary">Manage Subscription</a>
+                    <a href="{{ url_for('subscription_dashboard') }}" class="btn btn-primary">Manage Subscription</a>
                 </div>
             </div>
         </div>

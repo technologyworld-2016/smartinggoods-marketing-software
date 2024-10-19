@@ -72,6 +72,17 @@ def analytics():
     user_engagement_metrics = get_user_engagement_metrics()
     return render_template('analytics.html', subscription_metrics=subscription_metrics, user_engagement_metrics=user_engagement_metrics)
 
+@app.route('/dashboard/subscription')
+@login_required
+def subscription_dashboard():
+    # Fetch user's subscription details
+    subscription = Subscription.query.filter_by(user_id=current_user.id).first()
+    
+    # Fetch billing history (placeholder for now)
+    billing_history = []  # This should be replaced with actual billing history data
+    
+    return render_template('subscription_dashboard.html', user=current_user, subscription=subscription, billing_history=billing_history)
+
 @app.route('/create-checkout-session', methods=['POST'])
 @login_required
 def create_checkout_session():
