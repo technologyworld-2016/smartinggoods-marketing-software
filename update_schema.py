@@ -1,5 +1,5 @@
 from app import app, db
-from models import User, Subscription, UserSession
+from models import User, Subscription, UserSession, SubscriptionPlan
 from sqlalchemy import text
 from sqlalchemy.exc import ProgrammingError
 
@@ -46,6 +46,16 @@ def update_schema():
                 conn.execute(text('ALTER TABLE subscription ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP'))
                 conn.commit()
             print("Added created_at column to Subscription table.")
+
+        # Check if the stripe_price_id column exists in the SubscriptionPlan table
+        subscription_plan_columns = inspector.get_columns('subscription_plan')
+        subscription_plan_column_names = [column['name'] for column in subscription_plan_columns]
+
+        if 'stripe_price_id' not in subscription_plan_column_names:
+            with db.engine.connect() as conn:
+                conn.execute(text('ALTER TABLE subscription_plan ADD COLUMN stripe_price_id VARCHAR(50) UNIQUE'))
+                conn.commit()
+            print("Added stripe_price_id column to SubscriptionPlan table.")
 
         # Create UserSession table if it doesn't exist
         if not inspector.has_table('user_session'):

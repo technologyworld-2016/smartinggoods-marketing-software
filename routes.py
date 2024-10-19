@@ -1,5 +1,7 @@
-from flask import render_template, redirect, url_for, flash, request, jsonify
-from flask_login import login_user, login_required, logout_user, current_user
+import os
+from flask import render_template, flash, redirect, url_for, request, jsonify
+from flask_login import current_user, login_user, logout_user, login_required
+from werkzeug.urls import url_parse
 from app import app, db, login_manager
 from models import User, Subscription, UserSession, SiteSettings, SubscriptionPlan
 from forms import LoginForm, RegistrationForm
@@ -30,15 +32,21 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user, remember=form.remember_me.data)
-            track_user_login(user.id)
-            session = UserSession(user_id=user.id)
-            db.session.add(session)
-            db.session.commit()
-            return redirect(url_for('dashboard'))
-        flash('Invalid email or password')
-    return render_template('login.html', form=form)
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid email or password')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        track_user_login(user.id)
+        user.last_login = datetime.utcnow()
+        db.session.commit()
+        session = UserSession(user_id=user.id)
+        db.session.add(session)
+        db.session.commit()
+        next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('dashboard')
+        return redirect(next_page)
+    return render_template('login.html', title='Sign In', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -56,11 +64,16 @@ def register():
         user.stripe_customer_id = customer.id
         db.session.commit()
         
+        subscription_plan = SubscriptionPlan.query.filter_by(name=user.subscription_tier).first()
+        if not subscription_plan:
+            flash('Invalid subscription plan selected.', 'error')
+            return redirect(url_for('register'))
+        
         checkout_session = stripe.checkout.Session.create(
             customer=user.stripe_customer_id,
             payment_method_types=['card'],
             line_items=[{
-                'price': get_stripe_price_id(user.subscription_tier),
+                'price': subscription_plan.stripe_price_id,
                 'quantity': 1,
             }],
             mode='subscription',
@@ -288,11 +301,3 @@ def admin_settings():
                            allow_social_signup=site_settings.allow_social_signup,
                            free_trial_duration=site_settings.free_trial_duration,
                            subscription_plans=subscription_plans)
-
-def get_stripe_price_id(subscription_tier):
-    price_ids = {
-        'free': 'price_free',
-        'basic': 'price_basic',
-        'premium': 'price_premium'
-    }
-    return price_ids.get(subscription_tier, 'price_basic')

@@ -53,6 +53,7 @@ class SubscriptionPlan(db.Model):
     name = db.Column(db.String(50), nullable=False)
     price = db.Column(db.Float, nullable=False)
     features = db.Column(db.Text)  # Store as JSON string
+    stripe_price_id = db.Column(db.String(50), unique=True, nullable=False)  # New field for Stripe price ID
 
     def get_features(self):
         return json.loads(self.features)
