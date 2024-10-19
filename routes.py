@@ -1,12 +1,13 @@
 from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, login_required, logout_user, current_user
 from app import app, db, login_manager
-from models import User, Subscription, UserSession
+from models import User, Subscription, UserSession, SiteSettings, SubscriptionPlan
 from forms import LoginForm, RegistrationForm
-from utils import create_stripe_customer, create_stripe_subscription
+from utils import create_stripe_customer, create_stripe_subscription, admin_required
 from analytics import track_user_login, get_advanced_analytics
 import stripe
 from datetime import datetime
+import json
 
 stripe.api_key = app.config['STRIPE_SECRET_KEY']
 
@@ -47,11 +48,42 @@ def register():
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
+        user.subscription_tier = request.form['subscription_plan']
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('login'))
-    return render_template('register.html', form=form)
+        
+        customer = create_stripe_customer(user)
+        user.stripe_customer_id = customer.id
+        db.session.commit()
+        
+        checkout_session = stripe.checkout.Session.create(
+            customer=user.stripe_customer_id,
+            payment_method_types=['card'],
+            line_items=[{
+                'price': get_stripe_price_id(user.subscription_tier),
+                'quantity': 1,
+            }],
+            mode='subscription',
+            success_url=url_for('register_complete', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url=url_for('register', _external=True),
+        )
+        
+        return redirect(checkout_session.url, code=303)
+    return render_template('register.html', form=form, stripe_public_key=app.config['STRIPE_PUBLIC_KEY'])
+
+@app.route('/register/complete')
+def register_complete():
+    session_id = request.args.get('session_id')
+    if session_id:
+        checkout_session = stripe.checkout.Session.retrieve(session_id)
+        customer = stripe.Customer.retrieve(checkout_session.customer)
+        user = User.query.filter_by(stripe_customer_id=customer.id).first()
+        if user:
+            login_user(user)
+            flash('Registration complete! Welcome to our service.')
+            return redirect(url_for('dashboard'))
+    flash('There was an error processing your registration. Please try again.')
+    return redirect(url_for('register'))
 
 @app.route('/logout')
 @login_required
@@ -210,3 +242,57 @@ def manage_subscription(subscription_id):
         return redirect(url_for('dashboard'))
     
     return render_template('manage_subscription.html', subscription=subscription)
+
+@app.route('/admin/settings', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def admin_settings():
+    if request.method == 'POST':
+        if 'general' in request.form:
+            site_settings = SiteSettings.query.first() or SiteSettings()
+            site_settings.site_name = request.form.get('site-name')
+            site_settings.site_description = request.form.get('site-description')
+            db.session.add(site_settings)
+            db.session.commit()
+            flash('General settings updated successfully.', 'success')
+        elif 'signup' in request.form:
+            site_settings = SiteSettings.query.first() or SiteSettings()
+            site_settings.enable_email_verification = 'enable-email-verification' in request.form
+            site_settings.allow_social_signup = 'allow-social-signup' in request.form
+            site_settings.free_trial_duration = int(request.form.get('free-trial-duration', 0))
+            db.session.add(site_settings)
+            db.session.commit()
+            flash('Signup settings updated successfully.', 'success')
+        elif 'subscription' in request.form:
+            SubscriptionPlan.query.delete()
+            for key, value in request.form.items():
+                if key.startswith('plan-name-'):
+                    plan_index = key.split('-')[-1]
+                    name = value
+                    price = float(request.form.get(f'plan-price-{plan_index}', 0))
+                    features = request.form.get(f'plan-features-{plan_index}', '').split(',')
+                    plan = SubscriptionPlan(name=name, price=price, features=json.dumps(features))
+                    db.session.add(plan)
+            db.session.commit()
+            flash('Subscription plans updated successfully.', 'success')
+        
+        return redirect(url_for('admin_settings'))
+    
+    site_settings = SiteSettings.query.first() or SiteSettings()
+    subscription_plans = SubscriptionPlan.query.all()
+    
+    return render_template('admin_settings.html',
+                           site_name=site_settings.site_name,
+                           site_description=site_settings.site_description,
+                           enable_email_verification=site_settings.enable_email_verification,
+                           allow_social_signup=site_settings.allow_social_signup,
+                           free_trial_duration=site_settings.free_trial_duration,
+                           subscription_plans=subscription_plans)
+
+def get_stripe_price_id(subscription_tier):
+    price_ids = {
+        'free': 'price_free',
+        'basic': 'price_basic',
+        'premium': 'price_premium'
+    }
+    return price_ids.get(subscription_tier, 'price_basic')

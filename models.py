@@ -39,3 +39,23 @@ class UserSession(db.Model):
     def calculate_duration(self):
         if self.end_time:
             self.duration = (self.end_time - self.start_time).total_seconds()
+
+class SiteSettings(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    site_name = db.Column(db.String(100), default='SaaS Business')
+    site_description = db.Column(db.Text, default='Empowering businesses with cutting-edge SaaS solutions.')
+    enable_email_verification = db.Column(db.Boolean, default=True)
+    allow_social_signup = db.Column(db.Boolean, default=False)
+    free_trial_duration = db.Column(db.Integer, default=14)  # in days
+
+class SubscriptionPlan(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    features = db.Column(db.Text)  # Store as JSON string
+
+    def get_features(self):
+        return json.loads(self.features)
+
+    def set_features(self, features_list):
+        self.features = json.dumps(features_list)

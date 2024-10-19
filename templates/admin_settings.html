@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Settings - SaaS Business{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Admin Settings</h1>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="#general" class="list-group-item list-group-item-action active" data-bs-toggle="list">General Settings</a>
+                <a href="#signup" class="list-group-item list-group-item-action" data-bs-toggle="list">Signup Flow</a>
+                <a href="#subscription" class="list-group-item list-group-item-action" data-bs-toggle="list">Subscription Plans</a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="general">
+                    <h2>General Settings</h2>
+                    <form>
+                        <div class="mb-3">
+                            <label for="site-name" class="form-label">Site Name</label>
+                            <input type="text" class="form-control" id="site-name" name="site-name" value="{{ site_name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="site-description" class="form-label">Site Description</label>
+                            <textarea class="form-control" id="site-description" name="site-description" rows="3">{{ site_description }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save General Settings</button>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="signup">
+                    <h2>Signup Flow Settings</h2>
+                    <form>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="enable-email-verification" name="enable-email-verification" {% if enable_email_verification %}checked{% endif %}>
+                            <label class="form-check-label" for="enable-email-verification">Enable Email Verification</label>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="allow-social-signup" name="allow-social-signup" {% if allow_social_signup %}checked{% endif %}>
+                            <label class="form-check-label" for="allow-social-signup">Allow Social Media Signup</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="free-trial-duration" class="form-label">Free Trial Duration (days)</label>
+                            <input type="number" class="form-control" id="free-trial-duration" name="free-trial-duration" value="{{ free_trial_duration }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Signup Settings</button>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="subscription">
+                    <h2>Subscription Plan Settings</h2>
+                    <form id="subscription-plans-form">
+                        <div id="subscription-plans">
+                            {% for plan in subscription_plans %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Plan {{ loop.index }}</h5>
+                                    <div class="mb-3">
+                                        <label for="plan-name-{{ loop.index }}" class="form-label">Plan Name</label>
+                                        <input type="text" class="form-control" id="plan-name-{{ loop.index }}" name="plan-name-{{ loop.index }}" value="{{ plan.name }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="plan-price-{{ loop.index }}" class="form-label">Price</label>
+                                        <input type="number" class="form-control" id="plan-price-{{ loop.index }}" name="plan-price-{{ loop.index }}" value="{{ plan.price }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="plan-features-{{ loop.index }}" class="form-label">Features (comma-separated)</label>
+                                        <input type="text" class="form-control" id="plan-features-{{ loop.index }}" name="plan-features-{{ loop.index }}" value="{{ plan.features|join(', ') }}">
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-secondary mb-3" id="add-plan">Add New Plan</button>
+                        <button type="submit" class="btn btn-primary">Save Subscription Plans</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('add-plan').addEventListener('click', function() {
+        const plansContainer = document.getElementById('subscription-plans');
+        const planCount = plansContainer.children.length + 1;
+        
+        const newPlanHtml = `
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Plan ${planCount}</h5>
+                    <div class="mb-3">
+                        <label for="plan-name-${planCount}" class="form-label">Plan Name</label>
+                        <input type="text" class="form-control" id="plan-name-${planCount}" name="plan-name-${planCount}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="plan-price-${planCount}" class="form-label">Price</label>
+                        <input type="number" class="form-control" id="plan-price-${planCount}" name="plan-price-${planCount}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="plan-features-${planCount}" class="form-label">Features (comma-separated)</label>
+                        <input type="text" class="form-control" id="plan-features-${planCount}" name="plan-features-${planCount}">
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        plansContainer.insertAdjacentHTML('beforeend', newPlanHtml);
+    });
+</script>
+{% endblock %}
