@@ -4,6 +4,7 @@ from app import app, db, login_manager
 from models import User, Subscription
 from forms import LoginForm, RegistrationForm
 from utils import create_stripe_customer, create_stripe_subscription
+from analytics import track_user_login, get_subscription_metrics, get_user_engagement_metrics
 import stripe
 
 stripe.api_key = app.config['STRIPE_SECRET_KEY']
@@ -29,6 +30,7 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
+            track_user_login(user.id)  # Track user login
             return redirect(url_for('dashboard'))
         flash('Invalid email or password')
     return render_template('login.html', form=form)
@@ -62,6 +64,13 @@ def dashboard():
 @login_required
 def account():
     return render_template('account.html')
+
+@app.route('/analytics')
+@login_required
+def analytics():
+    subscription_metrics = get_subscription_metrics()
+    user_engagement_metrics = get_user_engagement_metrics()
+    return render_template('analytics.html', subscription_metrics=subscription_metrics, user_engagement_metrics=user_engagement_metrics)
 
 @app.route('/create-checkout-session', methods=['POST'])
 @login_required
