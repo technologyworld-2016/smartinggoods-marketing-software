@@ -1,11 +1,12 @@
 from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, login_required, logout_user, current_user
 from app import app, db, login_manager
-from models import User, Subscription
+from models import User, Subscription, UserSession
 from forms import LoginForm, RegistrationForm
 from utils import create_stripe_customer, create_stripe_subscription
-from analytics import track_user_login, get_subscription_metrics, get_user_engagement_metrics
+from analytics import track_user_login, get_advanced_analytics
 import stripe
+from datetime import datetime
 
 stripe.api_key = app.config['STRIPE_SECRET_KEY']
 
@@ -30,7 +31,10 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            track_user_login(user.id)  # Track user login
+            track_user_login(user.id)
+            session = UserSession(user_id=user.id)
+            db.session.add(session)
+            db.session.commit()
             return redirect(url_for('dashboard'))
         flash('Invalid email or password')
     return render_template('login.html', form=form)
@@ -52,6 +56,11 @@ def register():
 @app.route('/logout')
 @login_required
 def logout():
+    session = UserSession.query.filter_by(user_id=current_user.id, end_time=None).first()
+    if session:
+        session.end_time = datetime.utcnow()
+        session.calculate_duration()
+        db.session.commit()
     logout_user()
     return redirect(url_for('index'))
 
@@ -68,19 +77,14 @@ def account():
 @app.route('/analytics')
 @login_required
 def analytics():
-    subscription_metrics = get_subscription_metrics()
-    user_engagement_metrics = get_user_engagement_metrics()
-    return render_template('analytics.html', subscription_metrics=subscription_metrics, user_engagement_metrics=user_engagement_metrics)
+    advanced_analytics = get_advanced_analytics()
+    return render_template('analytics.html', analytics=advanced_analytics)
 
 @app.route('/dashboard/subscription')
 @login_required
 def subscription_dashboard():
-    # Fetch user's subscription details
     subscription = Subscription.query.filter_by(user_id=current_user.id).first()
-    
-    # Fetch billing history (placeholder for now)
-    billing_history = []  # This should be replaced with actual billing history data
-    
+    billing_history = []
     return render_template('subscription_dashboard.html', user=current_user, subscription=subscription, billing_history=billing_history)
 
 @app.route('/create-checkout-session', methods=['POST'])

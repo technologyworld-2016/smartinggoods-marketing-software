@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="mb-4">Analytics Dashboard</h1>
+    <h1 class="mb-4">Advanced Analytics Dashboard</h1>
     
     <div class="row">
         <div class="col-md-6">
@@ -14,23 +14,35 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Total Users
-                            <span class="badge bg-primary rounded-pill">{{ user_engagement_metrics.total_users }}</span>
+                            <span class="badge bg-primary rounded-pill">{{ analytics.user_metrics.total_users }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Active Users (30 days)
-                            <span class="badge bg-primary rounded-pill">{{ user_engagement_metrics.active_users_30d }}</span>
+                            <span class="badge bg-primary rounded-pill">{{ analytics.user_metrics.active_users_30d }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Active Users (7 days)
-                            <span class="badge bg-primary rounded-pill">{{ user_engagement_metrics.active_users_7d }}</span>
+                            <span class="badge bg-primary rounded-pill">{{ analytics.user_metrics.active_users_7d }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Engagement Rate (30 days)
-                            <span class="badge bg-primary rounded-pill">{{ "%.2f"|format(user_engagement_metrics.engagement_rate_30d * 100) }}%</span>
+                            <span class="badge bg-primary rounded-pill">{{ "%.2f"|format(analytics.user_metrics.engagement_rate_30d * 100) }}%</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Engagement Rate (7 days)
-                            <span class="badge bg-primary rounded-pill">{{ "%.2f"|format(user_engagement_metrics.engagement_rate_7d * 100) }}%</span>
+                            <span class="badge bg-primary rounded-pill">{{ "%.2f"|format(analytics.user_metrics.engagement_rate_7d * 100) }}%</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Retention Rate
+                            <span class="badge bg-primary rounded-pill">{{ "%.2f"|format(analytics.user_metrics.retention_rate * 100) }}%</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Avg. Session Duration
+                            <span class="badge bg-primary rounded-pill">{{ "%.2f"|format(analytics.user_metrics.avg_session_duration / 60) }} min</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Conversion Rate
+                            <span class="badge bg-primary rounded-pill">{{ "%.2f"|format(analytics.user_metrics.conversion_rate * 100) }}%</span>
                         </li>
                     </ul>
                 </div>
@@ -44,19 +56,35 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Total Subscriptions
-                            <span class="badge bg-primary rounded-pill">{{ subscription_metrics.total }}</span>
+                            <span class="badge bg-primary rounded-pill">{{ analytics.subscription_metrics.total }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Active Subscriptions
-                            <span class="badge bg-primary rounded-pill">{{ subscription_metrics.active }}</span>
+                            <span class="badge bg-primary rounded-pill">{{ analytics.subscription_metrics.active }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Cancelled Subscriptions
-                            <span class="badge bg-primary rounded-pill">{{ subscription_metrics.cancelled }}</span>
+                            <span class="badge bg-primary rounded-pill">{{ analytics.subscription_metrics.cancelled }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Churn Rate
-                            <span class="badge bg-primary rounded-pill">{{ "%.2f"|format(subscription_metrics.churn_rate * 100) }}%</span>
+                            <span class="badge bg-primary rounded-pill">{{ "%.2f"|format(analytics.subscription_metrics.churn_rate * 100) }}%</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Growth Rate
+                            <span class="badge bg-primary rounded-pill">{{ "%.2f"|format(analytics.subscription_metrics.growth_rate * 100) }}%</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Financial Metrics</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Average Revenue Per User (ARPU)
+                            <span class="badge bg-primary rounded-pill">${{ "%.2f"|format(analytics.arpu) }}</span>
                         </li>
                     </ul>
                 </div>
