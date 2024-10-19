@@ -67,11 +67,15 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    user_subscription = Subscription.query.filter_by(user_id=current_user.id).first()
+    recent_activity = UserSession.query.filter_by(user_id=current_user.id).order_by(UserSession.start_time.desc()).limit(5).all()
+    
     if current_user.is_admin:
         users = User.query.all()
         subscriptions = Subscription.query.all()
-        return render_template('admin_dashboard.html', users=users, subscriptions=subscriptions)
-    return render_template('dashboard.html')
+        return render_template('dashboard.html', users=users, subscriptions=subscriptions, user_subscription=user_subscription, recent_activity=recent_activity)
+    
+    return render_template('dashboard.html', user_subscription=user_subscription, recent_activity=recent_activity)
 
 @app.route('/account')
 @login_required
