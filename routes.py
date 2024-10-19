@@ -67,6 +67,10 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    if current_user.is_admin:
+        users = User.query.all()
+        subscriptions = Subscription.query.all()
+        return render_template('admin_dashboard.html', users=users, subscriptions=subscriptions)
     return render_template('dashboard.html')
 
 @app.route('/account')
@@ -154,17 +158,6 @@ def handle_subscription_updated(subscription):
             db_subscription.current_period_end = subscription['current_period_end']
             db.session.commit()
 
-@app.route('/admin')
-@login_required
-def admin_dashboard():
-    if not current_user.is_admin:
-        flash('You do not have permission to access the admin dashboard.', 'danger')
-        return redirect(url_for('index'))
-    
-    users = User.query.all()
-    subscriptions = Subscription.query.all()
-    return render_template('admin_dashboard.html', users=users, subscriptions=subscriptions)
-
 @app.route('/admin/edit_user/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def edit_user(user_id):
@@ -180,7 +173,7 @@ def edit_user(user_id):
         user.is_admin = 'is_admin' in request.form
         db.session.commit()
         flash('User updated successfully.', 'success')
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('dashboard'))
     
     return render_template('edit_user.html', user=user)
 
@@ -195,7 +188,7 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     flash('User deleted successfully.', 'success')
-    return redirect(url_for('admin_dashboard'))
+    return redirect(url_for('dashboard'))
 
 @app.route('/admin/manage_subscription/<int:subscription_id>', methods=['GET', 'POST'])
 @login_required
@@ -210,6 +203,6 @@ def manage_subscription(subscription_id):
         subscription.current_period_end = datetime.strptime(request.form['current_period_end'], '%Y-%m-%d')
         db.session.commit()
         flash('Subscription updated successfully.', 'success')
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('dashboard'))
     
     return render_template('manage_subscription.html', subscription=subscription)
