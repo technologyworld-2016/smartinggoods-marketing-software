@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Welcome to SaaS Business{% endblock %}
+{% block title %}Welcome to Smarting Goods Marketing Software{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-0">
@@ -9,25 +9,25 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="display-4 fw-bold mb-4">Empower Your Business with Our SaaS Solution</h1>
-                    <p class="lead mb-4">Streamline your workflow, gain valuable insights, and scale your business with our cutting-edge platform.</p>
-                    <a href="{{ url_for('pricing') }}" class="btn btn-primary btn-lg animate-pulse">Get Started</a>
+                    <h1 class="display-4 fw-bold mb-4">Empower Your Marketing with Smarting Goods</h1>
+                    <p class="lead mb-4">Streamline your workflow, gain valuable insights, and scale your marketing efforts with our cutting-edge platform.</p>
+                    <a href="{{ url_for('pricing') }}" class="btn btn-primary btn-lg">Get Started</a>
                 </div>
                 <div class="col-lg-6 d-none d-lg-block">
-                    <img src="{{ url_for('static', filename='images/hero-image.svg') }}" alt="Hero Image" class="img-fluid">
+                    <img src="{{ url_for('static', filename='images/hero-image.svg') }}" alt="Smarting Goods Marketing Software" class="img-fluid hero-image">
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section class="py-5 bg-light">
+    <section class="py-5">
         <div class="container">
             <h2 class="text-center mb-5">Key Features</h2>
-            <div class="row g-4 justify-content-center">
+            <div class="row g-4">
                 <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm feature-card">
-                        <div class="card-body text-center p-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
                             <i class="bi bi-graph-up display-4 text-primary mb-3"></i>
                             <h3 class="card-title h4">Advanced Analytics</h3>
                             <p class="card-text">Gain valuable insights with our powerful analytics tools.</p>
@@ -35,8 +35,8 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm feature-card">
-                        <div class="card-body text-center p-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
                             <i class="bi bi-shield-check display-4 text-primary mb-3"></i>
                             <h3 class="card-title h4">Secure & Scalable</h3>
                             <p class="card-text">Enterprise-grade security and scalability for your peace of mind.</p>
@@ -44,8 +44,8 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm feature-card">
-                        <div class="card-body text-center p-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
                             <i class="bi bi-people display-4 text-primary mb-3"></i>
                             <h3 class="card-title h4">Team Collaboration</h3>
                             <p class="card-text">Seamless collaboration tools to boost your team's productivity.</p>
@@ -56,75 +56,35 @@
         </div>
     </section>
 
-    <!-- How It Works Section -->
-    <section class="py-5">
-        <div class="container">
-            <h2 class="text-center mb-5">How It Works</h2>
-            <div class="row">
-                <div class="col-md-4 text-center mb-4">
-                    <div class="rounded-circle bg-primary text-white d-inline-flex justify-content-center align-items-center mb-3" style="width: 80px; height: 80px;">
-                        <h3 class="m-0">1</h3>
-                    </div>
-                    <h4>Sign Up</h4>
-                    <p>Create your account and choose a plan that fits your needs.</p>
-                </div>
-                <div class="col-md-4 text-center mb-4">
-                    <div class="rounded-circle bg-primary text-white d-inline-flex justify-content-center align-items-center mb-3" style="width: 80px; height: 80px;">
-                        <h3 class="m-0">2</h3>
-                    </div>
-                    <h4>Set Up</h4>
-                    <p>Customize your dashboard and integrate with your existing tools.</p>
-                </div>
-                <div class="col-md-4 text-center mb-4">
-                    <div class="rounded-circle bg-primary text-white d-inline-flex justify-content-center align-items-center mb-3" style="width: 80px; height: 80px;">
-                        <h3 class="m-0">3</h3>
-                    </div>
-                    <h4>Succeed</h4>
-                    <p>Start using our powerful features to grow your business.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Testimonials Section -->
     <section class="py-5 bg-light">
         <div class="container">
             <h2 class="text-center mb-5">What Our Customers Say</h2>
-            <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <p class="card-text">"This SaaS platform has revolutionized our business processes. Highly recommended!"</p>
-                                <footer class="blockquote-footer mt-3">John Doe, CEO of TechCorp</footer>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <p class="card-text">"The analytics features have provided us with invaluable insights. Great product!"</p>
-                                <footer class="blockquote-footer mt-3">Jane Smith, CTO of DataDrive</footer>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <p class="card-text">"Excellent customer support and continuous improvements. We're very satisfied!"</p>
-                                <footer class="blockquote-footer mt-3">Mike Johnson, Founder of StartupX</footer>
-                            </div>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <p class="card-text">"Smarting Goods has revolutionized our marketing processes. Highly recommended!"</p>
+                            <footer class="blockquote-footer mt-3">John Doe, CEO of TechCorp</footer>
                         </div>
                     </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
+                <div class="col-md-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <p class="card-text">"The analytics features have provided us with invaluable insights. Great product!"</p>
+                            <footer class="blockquote-footer mt-3">Jane Smith, CTO of DataDrive</footer>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <p class="card-text">"Excellent customer support and continuous improvements. We're very satisfied!"</p>
+                            <footer class="blockquote-footer mt-3">Mike Johnson, Founder of StartupX</footer>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -132,9 +92,9 @@
     <!-- CTA Section -->
     <section class="bg-primary text-light text-center py-5">
         <div class="container">
-            <h2 class="mb-4">Ready to Transform Your Business?</h2>
+            <h2 class="mb-4">Ready to Transform Your Marketing?</h2>
             <p class="lead mb-4">Join thousands of satisfied customers and take your business to the next level.</p>
-            <a href="{{ url_for('register') }}" class="btn btn-light btn-lg animate-pulse">Sign Up Now</a>
+            <a href="{{ url_for('register') }}" class="btn btn-light btn-lg">Sign Up Now</a>
         </div>
     </section>
 </div>
@@ -147,35 +107,9 @@
         background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23343a40"/><path d="M0 0L100 100" stroke="%23ffffff" stroke-width="0.5" stroke-opacity="0.1"/></svg>');
         background-size: 10px 10px;
     }
-    .feature-card {
-        transition: transform 0.3s ease-in-out;
-    }
-    .feature-card:hover {
-        transform: translateY(-5px);
-    }
-    .animate-pulse {
-        animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
-        }
-        70% {
-            box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-        }
+    .hero-image {
+        max-width: 100%;
+        height: auto;
     }
 </style>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var testimonialCarousel = new bootstrap.Carousel(document.getElementById('testimonialCarousel'), {
-            interval: 5000
-        });
-    });
-</script>
 {% endblock %}

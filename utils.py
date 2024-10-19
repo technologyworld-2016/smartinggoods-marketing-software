@@ -1,6 +1,9 @@
 import stripe
 from app import app
 from models import Subscription
+from functools import wraps
+from flask import abort
+from flask_login import current_user
 
 stripe.api_key = app.config['STRIPE_SECRET_KEY']
 
@@ -20,3 +23,11 @@ def create_stripe_subscription(user, subscription_id):
         current_period_end=stripe_subscription.current_period_end
     )
     return subscription
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
