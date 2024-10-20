@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://cdn.replit.com 'unsafe-inline'; script-src 'self' https://cdn.jsdelivr.net https://js.stripe.com 'unsafe-inline'; connect-src 'self' https://api.stripe.com;">
     <title>{% block title %}Smarting Goods{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">

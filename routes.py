@@ -1,16 +1,19 @@
 from flask import render_template, flash, redirect, url_for, request
-from flask_login import current_user, login_user, logout_user, login_required
+from flask_login import login_user, logout_user, current_user, login_required
+from urllib.parse import urlparse
 from app import app, db
-from forms import RegistrationForm, LoginForm
+from forms import LoginForm, RegistrationForm
 from models import User, Subscription, SubscriptionPlan
 from utils import create_stripe_customer, create_stripe_subscription
 import stripe
+from analytics import get_advanced_analytics
 
 stripe.api_key = app.config['STRIPE_SECRET_KEY']
 
 @app.route('/')
+@app.route('/index')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', title='Home')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -102,7 +105,10 @@ def login():
             flash('Invalid email or password', 'error')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('dashboard'))
+        next_page = request.args.get('next')
+        if not next_page or urlparse(next_page).netloc != '':
+            next_page = url_for('dashboard')
+        return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
 @app.route('/logout')
@@ -119,5 +125,16 @@ def dashboard():
 def pricing():
     plans = SubscriptionPlan.query.all()
     return render_template('pricing.html', plans=plans, stripe_public_key=app.config['STRIPE_PUBLIC_KEY'])
+
+@app.route('/account')
+@login_required
+def account():
+    return render_template('account.html')
+
+@app.route('/analytics')
+@login_required
+def analytics():
+    analytics_data = get_advanced_analytics()
+    return render_template('analytics.html', analytics=analytics_data)
 
 # Add other routes as needed
